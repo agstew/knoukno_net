@@ -1,0 +1,8 @@
+// Add these to your ESM server file (src/server.mjs)
+import payRouter from './routes/pay.mjs';   // at top with other imports
+
+// after app, helmet/cors/json/static:
+app.post('/api/free/start', (req, res) => {
+  res.json({ redirect: '/questions.html?free=1' });
+});
+app.use('/pay', payRouter);

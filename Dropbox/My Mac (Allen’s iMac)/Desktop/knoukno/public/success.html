@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Success — Kno U Kno</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="wrap">
+            <nav>
+                <div class="brand"><a href="index.html" style="color:inherit">Kno U Kno</a></div>
+            </nav>
+        </div>
+    </header>
+    <main class="wrap">
+        <div class="card" style="margin:24px 0">
+            <h1 style="font-size:28px;margin:.2em 0 .6em">Payment successful</h1>
+            <p class="notice">Thank you! Your payment was processed.</p>
+            <p class="notice">Checkout Session: <span id="sid"></span></p>
+            <a class="btn" href="index.html" style="margin-top:10px">Back to Home</a>
+        </div>
+    </main>
+    <footer>© <span id="y"></span> Kno U Kno</footer>
+    <script>
+        document.getElementById('y').textContent = new Date().getFullYear();
+        const url = new URL(location.href);
+        document.getElementById('sid').textContent = url.searchParams.get('sid') || '(not provided)';
+    </script>
+</body>
+
+</html>

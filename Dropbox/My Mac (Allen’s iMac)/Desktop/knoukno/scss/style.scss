@@ -1,0 +1,56 @@
+$brand: #5b4bff;
+$bg-light: #f7f7fb;
+$text-dark: #1d1f23;
+
+body {
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: $bg-light;
+    color: $text-dark;
+    margin: 0;
+    line-height: 1.6;
+}
+
+nav {
+    background: $brand;
+    color: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 0 0 12px 12px;
+
+    a {
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        margin-right: 1rem;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    h3 {
+        margin-top: 0;
+    }
+}
+
+button.save-all {
+    background: $brand;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &:hover {
+        filter: brightness(0.9);
+    }
+}

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — Answers — Kno U Kno</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .row {
+            margin: 12px 0
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .table-wrap {
+            overflow: auto;
+            max-height: 60vh;
+        }
+
+        .btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="wrap">
+            <nav>
+                <div class="brand"><a href="/index.html" style="color:inherit">Kno U Kno</a></div>
+                <div class="nav-links">
+                    <a href="/login.html">Login</a>
+                    <a href="/register.html">Register (Recovery Password)</a>
+                    <a href="/paidme/pay.html">Pay</a>
+                    <a href="/about.html">About</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <div class="card" style="margin:24px 0">
+            <h1 style="font-size:28px;margin:.2em 0 .6em">Answers Admin</h1>
+            <div class="grid">
+                <div>
+                    <label for="qid">Question #</label>
+                    <select id="qid">
+                        <option value="">Any</option>
+                        <script>
+                            document.currentScript.parentElement.innerHTML +=
+                                Array.from({ length: 50 }, (_, i) => '<option>' + (i + 1) + '</option>').join('');
+                        </script>
+                    </select>
+                </div>
+                <div>
+                    <label for="from">From (YYYY-MM-DD)</label>
+                    <input id="from" placeholder="2025-01-01">
+                </div>
+                <div>
+                    <label for="to">To (YYYY-MM-DD)</label>
+                    <input id="to" placeholder="2025-12-31">
+                </div>
+                <div class="btns" style="align-items:end">
+                    <button class="btn" id="apply">Apply</button>
+                    <a class="btn" id="csv" href="#" download="answers.csv">Download CSV</a>
+                    <span id="msg" class="notice"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="btns">
+                <span class="notice" id="count"></span>
+                <span class="notice" id="avg"></span>
+            </div>
+            <div class="table-wrap" style="margin-top:10px">
+                <table class="table" id="tbl">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Q#</th>
+                            <th>Rating</th>
+                            <th>Text</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>© <span id="y"></span> Kno U Kno</footer>
+    <script>
+        document.getElementById('y').textContent = new Date().getFullYear();
+        const API_BASE = (location.port === '5001') ? '' : 'http://127.0.0.1:5001';
+
+        function params() {
+            const qid = document.getElementById('qid').value;
+            const from = document.getElementById('from').value.trim();
+            const to = document.getElementById('to').value.trim();
+            const p = new URLSearchParams();
+            if (qid) p.set('question_id', qid);
+            if (from) p.set('from', from);
+            if (to) p.set('to', to);
+            return p;
+        }
+
+        function setCSVHref() {
+            const p = params();
+            const url = API_BASE + '/api/answers.csv' + (p.toString() ? ('?' + p.toString()) : '');
+            document.getElementById('csv').href = url;
+        }
+
+        async function load() {
+            const p = params();
+            const msg = document.getElementById('msg');
+            msg.textContent = 'Loading…';
+            try {
+                const url = API_BASE + '/api/answers/query' + (p.toString() ? ('?' + p.toString()) : '');
+                const res = await fetch(url);
+                const rows = await res.json();
+                const tb = document.querySelector('#tbl tbody');
+                tb.innerHTML = '';
+                let sum = 0, cnt = 0;
+
+                for (const r of rows) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td>' + r.id + '</td><td>' + (r.user ?? '') + '</td><td>' + r.question_id + '</td><td>' + (r.rating ?? '') + '</td><td>' + (r.text ?? '') + '</td><td>' + r.created_at + '</td>';
+                    tb.appendChild(tr);
+                    if (r.rating != null) { sum += Number(r.rating) || 0; cnt++; }
+                }
+                document.getElementById('count').textContent = 'Rows: ' + rows.length;
+                document.getElementById('avg').textContent = (cnt ? ('Avg rating: ' + (Math.round(100 * sum / cnt) / 100)) : 'Avg rating: —');
+                msg.textContent = '';
+                setCSVHref();
+            } catch (e) {
+                msg.textContent = 'Error: ' + e.message;
+            }
+        }
+
+        document.getElementById('apply').addEventListener('click', load);
+        ['qid', 'from', 'to'].forEach(id => document.getElementById(id).addEventListener('change', setCSVHref));
+
+        setCSVHref();
+        load();
+    </script>
+</body>
+
+</html>
