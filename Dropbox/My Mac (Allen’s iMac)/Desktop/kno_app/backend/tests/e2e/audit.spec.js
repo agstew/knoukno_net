@@ -1,29 +1,30 @@
 const { test, expect } = require('@playwright/test');
 
 test('admin actions produce audit entries (smoke)', async ({ page }) => {
-  // Become admin via dev quick-login
+  // Ensure we have an admin session first
   await page.goto('/dev/quick-login');
 
-  // Visit admin users to get CSRF token and ensure admin session
-  await page.goto('/admin/users');
+  // Fetch CSRF token then use the dev helper to create a deterministic audit entry
+  const csrfToken = await page.evaluate(async () => {
+    const r = await fetch('/auth/csrf-token', { credentials: 'same-origin' });
+    const j = await r.json();
+    return j && j.csrfToken;
+  });
 
-  // Extract the CSRF token from the first delete form on the page
-  const csrf = await page.locator('input[name="_csrf"]').first().inputValue();
+  const createRes = await page.evaluate(async (args) => {
+    const { csrf, secret } = args || {};
+    const body = new URLSearchParams();
+    body.append('_csrf', csrf || '');
+    body.append('action', 'e2e_test_create_audit');
+    body.append('targetEmail', `audit-test-${Date.now()}@example.com`);
+    if (secret) body.append('secret', secret);
+    const r = await fetch('/dev/create-audit', { method: 'POST', body, credentials: 'same-origin' });
+    return r.ok;
+  }, { csrf: csrfToken, secret: process.env.DEV_E2E_SECRET || '' });
+  expect(createRes).toBe(true);
 
-  // Click the first delete button in the users table to perform a real delete
-  // (this should generate an audit entry on the server).
-  const delBtn = page.locator('form[action="/admin/users/delete"] button').first();
-  // Accept the confirm dialog that appears on delete
-  page.on('dialog', async dlg => { await dlg.accept(); });
-  await delBtn.click();
-  // small delay to allow server work to complete
-  await page.waitForTimeout(500);
-
-  // Now visit the audit page and assert at least one audit row exists
+  // Now visit the audit page and assert the new audit row appears
   await page.goto('/admin/audit');
-  // Wait for either a row or the 'No audit records.' message
-  const rows = page.locator('tbody tr');
-  await rows.first().waitFor({ timeout: 6000 });
-  const firstText = await rows.first().innerText();
-  expect(firstText).not.toContain('No audit records.');
+  const entry = page.locator('tbody tr:has-text("e2e_test_create_audit")');
+  await expect(entry.first()).toBeVisible({ timeout: 6000 });
 });

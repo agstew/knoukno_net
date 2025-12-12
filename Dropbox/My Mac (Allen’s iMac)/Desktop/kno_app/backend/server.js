@@ -646,6 +646,14 @@ if (process.env.NODE_ENV !== 'production') {
 if (process.env.NODE_ENV !== 'production') {
 	app.post('/dev/create-audit', bodyParser.urlencoded({ extended: true }), async (req, res) => {
 		try {
+			// If a secret is configured for dev E2E operations, require it here.
+			const configuredSecret = String(process.env.DEV_E2E_SECRET || '').trim();
+			if (configuredSecret) {
+				const supplied = (req.body && (req.body.secret || req.body._secret)) || req.get('x-dev-e2e-secret') || req.headers['x-dev-e2e-secret'];
+				if (!supplied || String(supplied) !== configuredSecret) {
+					return res.status(403).json({ error: 'forbidden' });
+				}
+			}
 			const action = (req.body && req.body.action) ? String(req.body.action) : 'e2e_test';
 			const targetEmail = (req.body && req.body.targetEmail) ? String(req.body.targetEmail) : null;
 			const adminEmail = (req.body && req.body.adminEmail) ? String(req.body.adminEmail) : null;
