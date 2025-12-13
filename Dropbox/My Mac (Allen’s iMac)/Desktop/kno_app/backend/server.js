@@ -328,7 +328,9 @@ app.use((req, res, next) => {
 // access it — production keeps the cookie secure.
 const csrfCookieOptions = {
 	key: 'XSRF-TOKEN',                // cookie name
-	httpOnly: false,                  // allow client-side reads for SPA/debug in dev
+	// Make the cookie HttpOnly in production for security; keep it readable
+	// in development to aid debugging and E2E tests.
+	httpOnly: (process.env.NODE_ENV === 'production'),
 	secure: process.env.NODE_ENV === 'production',
 	sameSite: 'lax'
 };
