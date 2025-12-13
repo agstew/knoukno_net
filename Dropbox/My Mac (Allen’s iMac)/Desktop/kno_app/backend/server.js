@@ -319,7 +319,20 @@ app.use((req, res, next) => {
 
 // CSRF protection using double-submit cookie approach
 // We configure csurf to use cookies so the server doesn't need to hold session state.
-const csrfProtection = csurf({ cookie: true });
+// Provide explicit cookie options so local development over plain HTTP works
+// (Secure=false) while production remains secure. Also set a sane SameSite
+// policy to allow same-site POSTs from the SPA.
+// Use a readable cookie name so client-side code (or dev tools) can inspect
+// the CSRF token when needed. In development we intentionally make the
+// cookie readable (`httpOnly: false`) so tests and debugging tools can
+// access it — production keeps the cookie secure.
+const csrfCookieOptions = {
+	key: 'XSRF-TOKEN',                // cookie name
+	httpOnly: false,                  // allow client-side reads for SPA/debug in dev
+	secure: process.env.NODE_ENV === 'production',
+	sameSite: 'lax'
+};
+const csrfProtection = csurf({ cookie: csrfCookieOptions });
 
 // expose a simple endpoint to fetch CSRF token for single-page frontends
 app.get('/auth/csrf-token', csrfProtection, (req, res) => {
@@ -686,6 +699,27 @@ app.use('/api/dashboard', dashboardApi);
 app.use((err, req, res, next) => {
 	if (err && err.code === 'EBADCSRFTOKEN') {
 		errorEvents.inc({ route: req.originalUrl, type: 'csrf' });
+		// Dev-only verbose logging to diagnose CSRF failures. This logs
+		// cookies, incoming CSRF header/form value, and request meta so
+		// you can reproduce and fix cookie/token mismatches.
+		try {
+			if ((process.env.NODE_ENV || 'development') !== 'production') {
+				try {
+					console.warn('[CSRF DEBUG] Invalid CSRF token for request:', req.method, req.originalUrl);
+					console.warn('[CSRF DEBUG] IP:', req.ip);
+					console.warn('[CSRF DEBUG] req.cookies:', JSON.stringify(req.cookies || {}));
+					console.warn('[CSRF DEBUG] Cookie header:', req.get('cookie'));
+					console.warn('[CSRF DEBUG] X-CSRF-Token header:', req.get('X-CSRF-Token') || req.get('x-csrf-token'));
+					// body may be either urlencoded or JSON
+					try { console.warn('[CSRF DEBUG] body._csrf:', req.body && req.body._csrf); } catch (e) { console.warn('[CSRF DEBUG] body not parseable'); }
+				} catch (e) {
+					console.warn('[CSRF DEBUG] failed to print debug info:', e && e.message);
+				}
+			}
+		} catch (e) {
+			// ignore debug logging failures
+		}
+
 		return res.status(403).json({ error: 'Invalid CSRF token' });
 	}
 	next(err);

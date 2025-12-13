@@ -1,0 +1,62 @@
+name: Playwright E2E
+
+on:
+  push:
+    branches: [ main, dev/e2e-capture ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development
+      CI: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Install Playwright browsers
+        working-directory: backend
+        run: npx playwright install --with-deps
+
+      - name: Start backend
+        working-directory: backend
+        env:
+          DEV_E2E_SECRET: ${{ secrets.DEV_E2E_SECRET }}
+        run: |
+          # start server in background and capture logs
+          nohup npm start > server.run.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for backend ready
+        run: |
+          for i in {1..30}; do
+            status=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ready || true)
+            if [ "$status" = "200" ]; then
+              echo "Backend ready"; exit 0
+            fi
+            echo "Waiting for backend... attempt $i (status=$status)"
+            sleep 1
+          done
+          echo "Backend did not become ready"; tail -n 200 backend/server.run.log || true; exit 1
+
+      - name: Run Playwright tests
+        working-directory: backend
+        run: npx playwright test --reporter=list
+
+      - name: Upload server logs (for debugging)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-logs
+          path: backend/server.run.log
