@@ -1,0 +1,86 @@
+name: CI - Tests
+
+on:
+  push:
+    branches: [ main, dev, '**' ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests with coverage
+        env:
+          BASE: http://localhost:3001
+        run: npm run coverage
+      - name: List coverage files
+        if: always()
+        run: |
+          echo "Coverage directory contents:" && ls -la coverage || true
+      - name: Print coverage summary
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "coverage/coverage-summary.json contents:";
+            cat coverage/coverage-summary.json;
+          else
+            echo "coverage/coverage-summary.json not found";
+          fi
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-artifact
+          path: coverage/
+      - name: Check CODECOV_TOKEN present
+        if: always()
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          if [ -z "${CODECOV_TOKEN:-}" ]; then
+            echo "ERROR: CODECOV_TOKEN is not set in repository secrets";
+            exit 1;
+          else
+            echo "CODECOV_TOKEN is present (secret masked)";
+          fi
+      - name: Show coverage debug info
+        if: always()
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          echo "REMOTE: $(git remote get-url origin || true)";
+          echo "BRANCH: $(git rev-parse --abbrev-ref HEAD || true)";
+          echo "COMMIT: $(git rev-parse HEAD || true)";
+          echo "Coverage files:"; ls -la coverage || true;
+          if [ -z "${CODECOV_TOKEN:-}" ]; then
+            echo "CODECOV_TOKEN not set in environment";
+          else
+            echo "CODECOV_TOKEN length: $(echo -n "$CODECOV_TOKEN" | wc -c)";
+          fi
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          verbose: true
+      - name: Enforce coverage thresholds
+        if: success() || always()
+        env:
+          # These can be adjusted via repository secrets or workflow variables
+          COV_STATEMENTS: ${{ secrets.COV_STATEMENTS || '30' }}
+          COV_BRANCHES: ${{ secrets.COV_BRANCHES || '20' }}
+          COV_FUNCTIONS: ${{ secrets.COV_FUNCTIONS || '30' }}
+          COV_LINES: ${{ secrets.COV_LINES || '30' }}
+        run: |
+          echo "Checking coverage against thresholds..."
+          node scripts/check_coverage.js || (echo 'Coverage thresholds not met' && exit 1)
