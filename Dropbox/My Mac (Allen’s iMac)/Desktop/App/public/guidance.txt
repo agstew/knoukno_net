@@ -1,0 +1,16 @@
+Getting a business working is less about ideas and more about reliable operations, predictable cashflow, and managing risk. Begin by defining the specific product or service you will deliver and map the end-to-end workflow: lead → sale → fulfillment → billing → support. For each step, record who is responsible, how long it takes, and the direct cost. Replace manual handoffs with simple automations or a documented checklist so routine work is consistent and auditable.
+
+Make cashflow your daily operational priority. Build a rolling 90-day cash forecast with weekly granularity that shows expected inflows, outflows, and net position. Use conservative revenue assumptions and include timing buffers for receivables and payables. Align customer payment terms with your expense cadence: prefer shorter terms, offer discounts for prepayment, and adopt reliable invoicing or direct-debit tools to reduce late payments. Monitor your cash conversion cycle and set a target runway (e.g., 60–90 days) before taking new recurring obligations.
+
+Control recurring costs by auditing subscriptions and renegotiating supplier terms; outsource non-core work only if it reduces cost per unit or improves quality. Track gross margin by product or service line; discontinue or reprice items that erode margin at scale. Use simple dashboards to track acquisition cost, conversion rate, churn/retention, and contribution margin — these indicate whether growth is sustainable.
+
+Compliance reduces exposure. Choose an appropriate legal entity, keep business and personal finances separate, and maintain basic written contracts for customers and contractors. Stay current on payroll tax, sales tax, licensing, and data-protection obligations relevant to your industry. Store digital copies of critical documents and set calendar reminders for renewals and filings.
+
+Operationalize continuous improvement: set weekly operational reviews and a monthly metric review. Run short experiments to validate pricing, channels, or features, then standardize what works into documented processes. Hire only for roles that directly improve revenue delivery or quality, and onboard new hires with process documentation.
+
+Starter operational questions:
+- Which workflow causes the most delay or cost?
+- How many days of cash runway do I have today?
+- What payment terms shorten my cash conversion cycle?
+- Which contracts or licenses renew this year?
+- What one process can I automate this month to save time or money?
