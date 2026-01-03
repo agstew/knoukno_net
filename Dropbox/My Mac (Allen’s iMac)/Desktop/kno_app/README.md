@@ -1,46 +1,39 @@
-# Kno U Kno
+# KNO App (minimal scaffold)
 
-Development notes
+This repository contains a minimal Node + Express backend with security middleware and an example React client (UMD). It includes the requested dependencies: React, React-DOM, bcryptjs, mongoose, stripe, jsonwebtoken, cors, dotenv, helmet, uuid, express-rate-limit, Jest and Supertest.
 
-- Run the backend locally:
+Quick start:
+
+1. Copy `.env.example` to `.env` and update values.
+2. Install dependencies:
 
 ```bash
-cd backend
 npm install
-npm start
 ```
 
-- Run the backend E2E smoke test (local):
+3. Run in development:
 
 ```bash
-# from repository root
-npm run e2e
+npm run dev
 ```
 
-This runs `scripts/e2e-smoke.js` which exercises CSRF, auth, question and answer flows against `http://localhost:3000`.
+4. Run tests:
 
-CI
-
-- A GitHub Actions workflow `.github/workflows/e2e-smoke.yml` runs the E2E smoke test on push and pull requests. The workflow installs root dependencies, installs backend dependencies, starts the backend (using an in-memory MongoDB), waits for readiness, then runs `npm run e2e`.
-
-E2E & CSRF smoke test (local)
-
-- A quick smoke script is available at `scripts/smoke_csrf.sh` to help reproduce and debug CSRF issues locally. It:
-	- GETs `/auth/csrf-token` and saves the cookie jar to `backend/cookies.txt` and the token to `backend/csrf.json`.
-	- POSTs `/auth/login` using the same cookie jar and `_csrf` form field.
-
-Usage:
 ```bash
-# from repository root
-chmod +x scripts/smoke_csrf.sh
-./scripts/smoke_csrf.sh you@example.com badpassword
+npm test
 ```
 
-CI (Playwright)
+Server endpoints:
+- GET `/ping` - health check
+- POST `/api/auth/register` - register with `{ email, password }`
+- POST `/api/auth/login` - login with `{ email, password }`
 
-- The repository includes a Playwright E2E workflow at `.github/workflows/playwright-e2e.yml` which:
-	- installs backend dependencies, installs Playwright browsers, and starts the backend
-	- requires a repository secret `DEV_E2E_SECRET` (set via GitHub repo Settings → Secrets) if the dev-only `/dev/create-audit` helper is guarded
-	- waits for `http://localhost:3000/ready` before running `npx playwright test` in `backend`
+- GET `/api/me` - protected route; requires `Authorization: Bearer <token>` and returns the current user (no password)
 
-If you want me to add instructions to set the `DEV_E2E_SECRET` in your repo, tell me and I will provide the exact steps.
+Seed script:
+- Run `npm run seed` to populate demo users (see `.env.example` for `MONGO_URI`).
+
+Client:
+- Open `http://localhost:3000/` and use the auth form to register or login. The client stores the JWT in `localStorage` and shows a simple profile view.
+
+Client: open `http://localhost:3000/` after server starts.

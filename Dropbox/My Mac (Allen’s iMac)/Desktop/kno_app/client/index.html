@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KNO App - Client</title>
+    <link rel="stylesheet" href="/client/src/styles.css">
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script>
+      // Keep a minimal placeholder; auth UI is implemented in /client/auth.js
+      document.getElementById('root').innerHTML = '<h1>KNO App - React Client</h1><p>This page includes a simple auth demo below.</p>';
+    </script>
+    <script src="/client/auth.js"></script>
+  </body>
+</html>
