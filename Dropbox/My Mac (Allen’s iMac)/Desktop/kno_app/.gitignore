@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment
+.env
+.env.local
+
+# macOS
+.DS_Store
+.Trash/
+
+# Editor
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Dropbox/OS paths (avoid committing host-specific folders)
+Dropbox/
+
+# Logs
+logs/
+*.log
