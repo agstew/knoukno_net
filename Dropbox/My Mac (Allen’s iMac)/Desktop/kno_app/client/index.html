@@ -3,18 +3,30 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KNO App - Client</title>
+    <title>Kno U Kno</title>
     <link rel="stylesheet" href="/client/src/styles.css">
   </head>
   <body>
-    <div id="root"></div>
+    <nav class="main-nav">
+      <div class="nav-inner">
+        <div class="brand"><a href="/" id="nav-home-brand">Kno U Kno</a></div>
+        <ul>
+          <li><a href="/" id="nav-home">Home</a></li>
+          <li><a href="/register" id="nav-register">Register</a></li>
+          <li><a href="/about" id="nav-about">About</a></li>
+          <li><a href="/login" id="nav-login">Login</a></li>
+          <li><a href="/price" id="nav-price">Price</a></li>
+        </ul>
+      </div>
+    </nav>
 
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script>
-      // Keep a minimal placeholder; auth UI is implemented in /client/auth.js
-      document.getElementById('root').innerHTML = '<h1>KNO App - React Client</h1><p>This page includes a simple auth demo below.</p>';
-    </script>
+    <main id="root"></main>
+
+    <section id="about">
+    </section>
+
+    
+
     <script src="/client/auth.js"></script>
   </body>
 </html>
