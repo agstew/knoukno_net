@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ dev/add-dev-scripts, pr/add-e2e-and-pr-draft, agstew-knoukno ]
+  pull_request:
+    branches: [ agstew-knoukno ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Run unit tests
+        run: npm test
+
+  playwright:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install deps
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Serve frontend and run Playwright
+        run: |
+          npx serve -s frontend/build -l 3000 &
+          npx playwright test --reporter=list
