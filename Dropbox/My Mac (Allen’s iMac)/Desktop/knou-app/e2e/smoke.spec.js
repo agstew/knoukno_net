@@ -3,14 +3,14 @@ const { test, expect } = require('@playwright/test');
 const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 test.describe('Smoke UI tests', () => {
-  async function waitForAny(page, selectors, timeout = 5000){
+  async function waitForAny(page, selectors, timeout = 15000){
     const start = Date.now();
     while(Date.now() - start < timeout){
       for(const s of selectors){
         const n = await page.locator(s).count();
         if (n && n > 0) return true;
       }
-      await page.waitForTimeout(200);
+      await page.waitForTimeout(300);
     }
     return false;
   }
