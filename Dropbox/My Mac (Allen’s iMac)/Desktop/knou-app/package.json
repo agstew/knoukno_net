@@ -8,7 +8,8 @@
     "seed": "node scripts/seed.js",
     "ngrok-webhook": "node scripts/start-ngrok-webhook.js",
     "print-admin-token": "node scripts/print-admin-token.js",
-    "test": "jest --runInBand",
+    "send-webhook-test": "node scripts/send-test-webhook.js",
+    "test": "jest --runInBand --testPathIgnorePatterns \"/playwright/|/e2e/|/frontend/|/playwright/tests/\"",
     "test:playwright": "npx playwright test"
   },
   "dependencies": {
