@@ -1,24 +1,26 @@
 # Node
 node_modules/
-npm-debug.log
-yarn-error.log
 
 # Environment
 .env
-.env.local
+*.env
 
 # macOS
 .DS_Store
-.Trash/
 
-# Editor
+# Editor directories
 .vscode/
-*.sublime-workspace
-*.sublime-project
+.idea/
 
-# Dropbox/OS paths (avoid committing host-specific folders)
-Dropbox/
+# Coverage
+/backend/coverage/
+/coverage/
 
 # Logs
-logs/
-*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+/frontend/dist/
+/backend/dist/
