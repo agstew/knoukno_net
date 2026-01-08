@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  .admin-layout
+    .admin-sidebar
+      .card
+        h3 Questions Admin
+        a.button-secondary(href='/admin') Back to Admin
+        p.meta Showing questions page #{page || 1}
+    .admin-main
+      h2 Questions
+      if questions && questions.length
+        each q in questions
+          .question.card.admin-list-item
+            .meta #{q.category} — #{q.createdAt.toLocaleString()}
+            h3 #{q.text}
+            if q.example
+              p Example: #{q.example}
+            .question-actions
+              a.button-secondary(href=`/admin/print-question/${q._id}`) Print
+              a.button-secondary(href=`/admin/question-answers/${q._id}?page=1&limit=25`) Answers
+              a.button-secondary(href=`/admin/question-average/${q._id}`) Average
+              form(method='post' action='/admin/delete-question' style='display:inline;margin-left:8px')
+                input(type='hidden' name='id' value=q._id)
+                button.button-danger(type='submit') Delete
+
+        .pager
+          if page>1
+            a(href=`/admin/questions?page=${page-1}&limit=${limit}`) Prev
+          if (page*limit) < total
+            a(href=`/admin/questions?page=${page+1}&limit=${limit}`) Next
+      else
+        p No questions yet.

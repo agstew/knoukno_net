@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h2 Printable Submission
+  h3= submission.question && submission.question.text
+  p Submitted by: #{submission.name || 'guest'} on #{submission.createdAt}
+  pre= submission.answerText
+  script.
+    window.print();
+  a(href='/admin') Back

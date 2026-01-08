@@ -1,0 +1,69 @@
+extends layout
+
+block content
+  .admin-layout
+    .admin-sidebar
+      .card
+        h3 Admin Controls
+        p.meta Showing submissions page #{page || 1}
+        a.button-secondary(href='/admin/questions') Manage Questions
+        form(method='post' action='/admin/save-all' style='margin-top:8px')
+          button.button-primary(type='submit') Save All Submissions
+      .card
+        h4 Bulk actions (page)
+        form(method='post' action='/admin/bulk/save-page')
+          input(type='hidden' name='page' value=page)
+          input(type='hidden' name='limit' value=limit)
+          button.button-secondary(type='submit') Save Answers (page)
+        form(method='post' action='/admin/bulk/save-grade' style='margin-top:8px')
+          input(type='hidden' name='page' value=page)
+          input(type='hidden' name='limit' value=limit)
+          input(type='text' name='grade' placeholder='Grade (A-F or number)')
+          button.button-secondary(type='submit') Save Grade (page)
+        form(method='post' action='/admin/bulk/save-rated' style='margin-top:8px')
+          input(type='hidden' name='page' value=page)
+          input(type='hidden' name='limit' value=limit)
+          input(type='number' name='rating' min='1' placeholder='Rating')
+          button.button-secondary(type='submit') Save Rated (page)
+      .card
+        h4 Make user free
+        form(method='post' action='/admin/free-user')
+          label User ID
+          input(type='text' name='userId')
+          button.button-secondary(type='submit') Set Free
+
+    .admin-main
+      if submissions && submissions.length
+        each s in submissions
+          .submission.card.admin-list-item
+            .submission-row
+              .meta
+                strong #{s.name || 'guest'}
+                |  — #{s.createdAt.toLocaleString()}
+                if s.question
+                  |  ·
+                  a(href=`/questions/id/${s.question}`) View Question
+              if s.rating
+                span.badge-saved Rated: #{s.rating}
+              if s.graded
+                span.badge-graded Grade: #{s.grade}
+            p.answer-text #{s.answerText}
+            .admin-actions
+              form(method='post' action='/admin/save' style='display:inline')
+                input(type='hidden' name='id' value=s._id)
+                button.button-primary(type='submit') Save
+              form(method='post' action='/admin/delete' style='display:inline;margin-left:8px')
+                input(type='hidden' name='id' value=s._id)
+                button.button-danger(type='submit') Delete
+              a.button-secondary(href=`/admin/print/${s._id}` style='margin-left:8px') Print
+              a.button-secondary(href=`/admin/grade/${s._id}` style='margin-left:8px') Grade
+              a.button-secondary(href=`/admin/rate/${s._id}` style='margin-left:8px') Rate
+              a.button-secondary(href=`/admin/question-answers/${s.question}?page=1&limit=25` style='margin-left:8px') Answers
+
+        .pager
+          if page>1
+            a(href=`/admin?page=${page-1}&limit=${limit}`) Prev
+          if (page*limit) < submissionsTotal
+            a(href=`/admin?page=${page+1}&limit=${limit}`) Next
+      else
+        p No submissions yet.

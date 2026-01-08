@@ -1,0 +1,57 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width,initial-scale=1")
+    title #{title || 'Kno U Kno'}
+    if csrfToken
+      meta(name="csrf-token" content=csrfToken)
+    link(rel="stylesheet" href="/styles.css")
+  body
+    header.site-header
+      h1.site-title
+        a(href='/') Kno U Kno
+      if currentUser
+        .user-info
+          span Hello,&nbsp;
+          strong #{currentUser.name}
+          span.sep | 
+          span.remaining Questions left: #{currentUser.questionsRemaining}
+          a(href='/auth/logout' style='margin-left:12px;color:var(--white);') Logout
+      nav
+        if !currentUser
+          a(href='/auth/login') Login
+          a(href='/auth/register') Register
+          a(href='/about') About
+        else
+          a(href='/dashboard') Dashboard
+          a(href='/about') About
+          //- Admin dropdown for privileged users (admin or members/pro)
+          if currentUser && (currentUser.role == 'admin' || currentUser.tier == 'members' || currentUser.tier == 'pro')
+            .admin-menu
+              span Admin
+              ul
+                li
+                  a(href='/admin') Admin Dashboard
+                li
+                  a(href='/admin/questions') Manage Questions
+                li
+                  form(method='post' action='/admin/save-all')
+                    if csrfToken
+                      input(type='hidden' name='_csrf' value=csrfToken)
+                    button.button-link(type='submit') Save All Submissions
+                li
+                  a(href='/admin') Bulk actions (open admin)
+                li
+                  a(href='/admin/free-user') Make User Free
+        //- single logout link
+        if currentUser
+          span.sep | 
+          a(href='/auth/logout' style='margin-left:12px;color:var(--white);') Logout
+    main
+      block content
+    footer
+      small © Kno U Kno
+    script(src='/checkout.js')
+    script(src='/auth.js')
+    script(src='/header.js')

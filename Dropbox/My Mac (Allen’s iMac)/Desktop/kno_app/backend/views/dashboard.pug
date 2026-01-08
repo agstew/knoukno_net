@@ -1,0 +1,49 @@
+extends layout
+
+block content
+  .container
+    h2 Dashboard
+    .container-actions
+      .client-actions
+        span.lead Tier: #{(currentUser && currentUser.tier) ? currentUser.tier.toUpperCase() : 'FREE'}
+        button.button-secondary(type='button' onclick='window.print()') Print
+        a.button-primary(href='/questions') Questions
+        a.button-secondary(href='/questions') Answers
+        a.button-secondary(href='/questions') Question
+        a.button-secondary(href='/pricing') Price
+
+      // Tier-specific controls
+      if !(currentUser && currentUser.tier === 'members') && !(currentUser && currentUser.tier === 'pro')
+        // Free tier
+        .free-controls
+          button.button-secondary(type='button') Save
+          button.button-secondary(type='button' onclick='window.print()') Print
+      else
+        // Member or Pro tier
+        .member-controls
+          button.button-secondary(type='button' onclick='window.print()') Print
+          button.button-primary(type='button') Save
+          button.button-secondary(type='button') Question
+          button.button-secondary(type='button') Grade
+          button.button-secondary(type='button') Rated
+          button.button-secondary(type='button') Answers
+          button.button-secondary(type='button') Average
+          // Bulk actions
+          form(method='post' action='/admin/bulk/save-page' style='display:inline;margin-left:8px')
+            input(type='hidden' name='page' value='1')
+            input(type='hidden' name='limit' value='25')
+            button.button-secondary(type='submit') Save Answers
+          form(method='post' action='/admin/bulk/save-grade' style='display:inline;margin-left:8px')
+            input(type='hidden' name='page' value='1')
+            input(type='hidden' name='limit' value='25')
+            input(type='text' name='grade' placeholder='Grade (A-F or number)')
+            button.button-secondary(type='submit') Save Grade
+          form(method='post' action='/admin/bulk/save-rated' style='display:inline;margin-left:8px')
+            input(type='hidden' name='page' value='1')
+            input(type='hidden' name='limit' value='25')
+            input(type='number' name='rating' min='1' placeholder='Rating')
+            button.button-secondary(type='submit') Save Rated
+          form(method='post' action='/admin/save-all' style='display:inline;margin-left:8px')
+            button.button-secondary(type='submit') Save All
+          form(method='post' action='/admin/save-all' style='display:inline;margin-left:8px')
+            button.button-danger(type='submit') Delete

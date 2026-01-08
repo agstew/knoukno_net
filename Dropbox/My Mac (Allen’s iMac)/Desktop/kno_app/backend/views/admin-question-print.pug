@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h2 Printable Question
+  .card
+    h3 #{question.text}
+    if question.example
+      p Example: #{question.example}
+  a(href='/admin/questions') Back

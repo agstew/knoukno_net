@@ -1,0 +1,70 @@
+extends layout
+
+block content
+  .container
+    h2 Pricing
+    p All features and purchases require registration. Sign up or log in to purchase.
+
+    .pricing-grid
+    // Free
+    .pricing-card.free
+      .card-header
+        h3 Free
+        span.badge Free Trial
+      .card-body
+        p.lead 5 questions — 3 days
+        ul.features
+          li ✓ Save page
+          li ✓ Print page
+        .price-block
+          span.price $0
+          span.note (3 day trial)
+        form(action='/payments/create-checkout-session' method='post')
+          input(type='hidden' name='tier' value='free')
+          button.button-secondary(type='submit') Start Free
+
+    // Members
+    .pricing-card.popular
+      .card-header
+        h3 Members
+        span.badge Popular
+      .card-body
+        p.lead 175 questions
+        ul.features
+          li ✓ Print page
+          li ✓ Save page
+          li ✓ Grade page
+          li ✓ Rate page
+          li ✓ Average page
+        .price-block
+          span.old-price $49.00
+          span.price $39.00
+          span.savings(title='20% discount applied') You save $10
+        form.checkout-form(data-tier='members')
+          button.button-primary(type='submit') Buy Now — $39.00
+
+    // Pro
+    .pricing-card.pro
+      .card-header
+        h3 Pro
+        span.badge Pro
+      .card-body
+        p.lead 75 questions / Year
+        ul.features
+          li ✓ Print page
+          li ✓ Save page
+          li ✓ Grade page
+          li ✓ Rate page
+          li ✓ Average page
+        .price-block
+          span.old-price $675.00
+          span.price $436.00
+          span.savings(title='35% discount applied') You save $239
+        form.checkout-form(data-tier='pro')
+          button.button-primary(type='submit') Buy Now — $436.00
+
+    .bonus-card
+      h3 Bonus Questions
+      p Bonus: 100 additional questions for $100.00 if you buy now
+      form.checkout-form(data-tier='bonus')
+        button.button-secondary(type='submit') Buy Bonus — $100.00

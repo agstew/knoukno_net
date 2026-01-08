@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .container
+    h2 Rate: #{title.title}
+    form(method='post' action=`/titles/${title._id}/rate`)
+      label Rating
+      // Members: 1-50, Pro: 1-75 enforced in UI via min/max dynamically would require client JS; default to 1-50 here
+      input(type='number' name='rating' min='1' max='75' required)
+      p.small Members: 1-50, Pro: 1-75. Enter a number within the allowed range.
+      button(type='submit') Save Rating
+    a(href=`/titles/${title._id}`) Back
+extends layout
+
+block content
+  .container
+    h2 Rate: #{title.title}
+    form(method='post' action=`/titles/${title._id}/rate`)
+      label Rating (1-50)
+      input(type='number' name='rating' min='1' max='50' required)
+      p.small Members: 1-50. Enter a number within the allowed range.
+      button(type='submit') Save Rating
+    a(href=`/titles/${title._id}`) Back

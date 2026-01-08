@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  .container
+    h2 #{title.title}
+    p Printable view
+    pre #{JSON.stringify(title, null, 2)}
+    script
+      window.print()

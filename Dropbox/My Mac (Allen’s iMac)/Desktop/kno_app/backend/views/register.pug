@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  .auth-card
+    h2 Register
+    if error
+      p.form-error #{error}
+    if message
+      p.form-notice #{message}
+    form.auth-form(method='post' action='/auth/register')
+      .field
+        label(for='name') Name
+        input#name(type='text' name='name' placeholder='Your full name' required)
+      .field
+        label(for='email') Email
+        input#email(type='email' name='email' placeholder='you@example.com' required)
+      .field
+        label(for='password') Password
+        .pw-row
+          input#password(type='password' name='password' placeholder='Create a password' required minlength='6')
+          button.pw-toggle(type='button' aria-label='Show password') Show
+      .field
+        label(for='confirm') Confirm Password
+        input#confirm(type='password' name='confirm' placeholder='Repeat your password' required minlength='6')
+      .actions
+        button.button-primary(type='submit') Create account
+      p.small
+        | Already have an account?
+        a(href='/auth/login') Sign in
+        |  •
+        a(href='/auth/forgot') Forgot password

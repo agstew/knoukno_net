@@ -1,0 +1,52 @@
+extends layout
+
+block content
+  .container
+    h2 Questions (page #{page})
+    each q in questions
+      .question
+        .question-header
+          h3= q.text
+          if currentUser
+            span.tier-badge(title=`Tier: ${currentUser.tier || 'free'} — Questions left: ${currentUser.questionsRemaining || 0}`)= `${(currentUser.tier || 'free').toUpperCase()}`
+        p.example
+          strong Example:
+          |  #{q.example}
+        if avgMap && avgMap[q._id]
+          p.small Average rating: #{avgMap[q._id].toFixed(2)} / 50
+
+        .question-actions
+          button.button-secondary(type='button' onclick='window.print()') Print Page
+          form(method='post' action='/questions/save-page' style='display:inline')
+            input(type='hidden' name='questionId' value=q._id)
+            button.button-secondary(type='submit') Save Page
+          a.button-secondary(href=`/questions/${q._id}/answers` style='margin-left:8px') Answers
+          // Admin-only actions
+          if currentUser && currentUser.role === 'admin'
+            a.button-secondary(href=`/admin/print-question/${q._id}` style='margin-left:8px') Print
+            a.button-secondary(href=`/admin/question-answers/${q._id}` style='margin-left:8px') Question
+            a.button-secondary(href=`/admin/question-average/${q._id}` style='margin-left:8px') Average
+            form(method='post' action='/admin/question-average-save' style='display:inline;margin-left:8px')
+              input(type='hidden' name='questionId' value=q._id)
+              button.button-secondary(type='submit') Average Save
+            a.button-secondary(href=`/admin/grade/${q._id}` style='margin-left:8px') Grade
+            a.button-secondary(href=`/admin/rate/${q._id}` style='margin-left:8px') Rated
+            form(method='post' action='/admin/delete-question' style='display:inline;margin-left:8px')
+              input(type='hidden' name='id' value=q._id)
+              button.button-danger(type='submit' onclick='return confirm("Delete this question?")') Delete
+            // Bulk actions (page-scoped)
+            form(method='post' action='/admin/save-all' style='display:inline;margin-left:8px')
+              button.button-secondary(type='submit') Save All
+
+        form(method='post' action='/questions/answer' class='answer-form')
+          input(type='hidden' name='questionId' value=q._id)
+          label(for='answer') Your answer
+          textarea(id='answer' name='answerText' rows='6' placeholder='Write one paragraph or a short checklist.' aria-label='Your answer')
+          .actions
+            button.button-primary(type='submit') Save Answer
+
+        
+    if page>1
+      a(href=`/questions?page=${page-1}&limit=${limit}`) Prev
+
+    // Quick jumps removed per request
