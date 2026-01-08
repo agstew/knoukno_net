@@ -45,6 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Insert CSRF hidden inputs into all POST forms when meta csrf-token is present
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta && meta.content) {
+    document.querySelectorAll('form[method="post"]').forEach(f => {
+      if (!f.querySelector('input[name="_csrf"]')) {
+        const inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = '_csrf';
+        inp.value = meta.content;
+        f.prepend(inp);
+      }
+    });
+  }
 });
 
 function showToast(message, type='info'){
