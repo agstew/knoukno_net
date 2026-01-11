@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# CSRF-aware admin link verifier
+# Usage: ./scripts/verify_admin_links.sh
+
+TMPDIR=$(mktemp -d)
+LOGIN_HTML="$TMPDIR/login.html"
+ADMIN_HTML="$TMPDIR/admin.html"
+COOKIES="$TMPDIR/cookies.txt"
+HREFS="$TMPDIR/hrefs.txt"
+RESULTS="$TMPDIR/href_results.txt"
+
+cleanup(){ rm -rf "$TMPDIR"; }
+trap cleanup EXIT
+
+echo "Fetching login page to capture CSRF token..."
+curl -ks -c "$COOKIES" -o "$LOGIN_HTML" https://localhost:3000/auth/login
+TOKEN=$(perl -nle 'print $1 if /<meta name="csrf-token" content="([^"]+)"/;' "$LOGIN_HTML" || true)
+if [ -z "$TOKEN" ]; then echo "ERROR: no CSRF token found" >&2; exit 2; fi
+
+echo "csrf-token: $TOKEN"
+
+echo "Logging in as admin (uses local dev credentials)..."
+# WARNING: uses local test credentials present in dev DB
+curl -ks -L -b "$COOKIES" -c "$COOKIES" -H "x-csrf-token: $TOKEN" -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data 'email=allenstewart562@gmail.com&password=AgS560201' https://localhost:3000/auth/login -o /dev/null -w 'login_http_code:%{http_code}\n'
+
+echo "Fetching /admin..."
+curl -ks -b "$COOKIES" -c "$COOKIES" https://localhost:3000/admin -o "$ADMIN_HTML"
+
+echo "Extracting anchor hrefs..."
+perl -nle 'while(/href\s*=\s*["\']([^"\']+)/g){print $1}' "$ADMIN_HTML" | sed 's/&amp;/\&/g' | sort -u > "$HREFS"
+if [ ! -s "$HREFS" ]; then echo "No hrefs found on /admin"; exit 0; fi
+
+echo "Testing links (following redirects where appropriate)..."
+: > "$RESULTS"
+while IFS= read -r href; do
+  [ -z "$href" ] && continue
+  case "$href" in
+    javascript:*|mailto:*) echo "SKIP $href" | tee -a "$RESULTS"; continue ;;
+    /*) url="https://localhost:3000$href" ;;
+    http*) url="$href" ;;
+    *) url="https://localhost:3000/$href" ;;
+  esac
+  code=$(curl -ks -o /dev/null -w "%{http_code}" -b "$COOKIES" -c "$COOKIES" -I -L --max-redirs 5 --connect-timeout 5 "$url" || echo 000)
+  echo "$code $href -> $url" | tee -a "$RESULTS"
+done < "$HREFS"
+
+echo "--- Results ---"
+cat "$RESULTS"
+
+echo "Saved results to: $RESULTS"

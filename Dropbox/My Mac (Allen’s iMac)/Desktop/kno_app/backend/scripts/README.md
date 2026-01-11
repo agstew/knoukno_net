@@ -8,6 +8,11 @@ Backups / alternates
 - `verify_admin_links_fixed.sh` — intermediate attempted fix (kept for reference).
 - `verify_admin_links_node.sh` — alternate node-based script (functionally equivalent to the active script).
 
+Archived backups
+
+- `archive/verify_admin_links.sh.bak` — original perl-based verifier (moved to `archive/`).
+- `archive/verify_admin_links_fixed.sh` — intermediate attempted fix (moved to `archive/`).
+
 Usage
 
 Make executable and run from `backend`:
