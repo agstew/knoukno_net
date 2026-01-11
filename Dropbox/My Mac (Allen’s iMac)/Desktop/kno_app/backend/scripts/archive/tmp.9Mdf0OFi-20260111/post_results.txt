@@ -1,0 +1,8 @@
+POST phase: EXECUTE=1 (will perform safe POSTs)
+302 POST /admin/save id=6962cb7531cafa4aa41600c6
+302 POST /admin/save id=6962cb3931cafa4aa41600a5
+302 POST /admin/save id=695fcb96cdd05c2e28f2cc41
+302 POST /admin/save-all
+302 POST /admin/bulk/save-page page=1&limit=25
+302 POST /admin/bulk/save-grade page=1&limit=25&grade=F
+302 POST /admin/bulk/save-rated page=1&limit=25&rating=1
