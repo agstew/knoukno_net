@@ -1,2 +1,0 @@
-20241025	12:24:13	f1955d90-0bfe-48d0-89b3-4bcc65b26ba0]	Log event emitted!
-20241025	12:24:22	1d259ca2-70b3-4225-98f2-a66134a6cc57]	Log event emitted!

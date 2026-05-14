@@ -1,5 +1,0 @@
-node_modules/
-.env
-app_server.log
-app_server.pid
-.DS_Store
