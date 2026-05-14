@@ -1,0 +1,15 @@
+{
+  "name": "knoukno-zapier",
+  "version": "1.0.0",
+  "description": "Zapier integration for Kno U Kno — triggers on new user registration and fires welcome email action",
+  "main": "index.js",
+  "scripts": {
+    "test": "zapier test"
+  },
+  "dependencies": {
+    "zapier-platform-core": "15.5.0"
+  },
+  "devDependencies": {
+    "zapier-platform-cli": "15.5.0"
+  }
+}
