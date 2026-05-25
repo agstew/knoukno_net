@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: knoukno-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: knoukno-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5001
+      MONGODB_URI: mongodb://mongo:27017/knoukno_net
+      JWT_SECRET: change-this-secret
+      WEB_URL: http://localhost:3000
+      ADMIN_EMAIL: admin@knoukno.net
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: knoukno-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE: http://localhost:5001/api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
