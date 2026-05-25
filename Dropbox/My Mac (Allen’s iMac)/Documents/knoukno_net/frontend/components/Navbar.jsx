@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navItems = [
@@ -17,6 +18,14 @@ export default function Navbar() {
     <nav className="app-navbar navbar navbar-expand-lg px-3 py-2">
       <div className="container-fluid">
         <Link href="/" className="navbar-brand text-white fw-bold d-flex gap-2 align-items-center">
+          <Image
+            src="/images/knoukno-logo.svg"
+            alt="KnoUKno logo"
+            width={40}
+            height={40}
+            priority
+            className="brand-logo"
+          />
           <span className="brand-chip">KnoUKno.net</span>
         </Link>
         <div className="d-flex gap-2">
