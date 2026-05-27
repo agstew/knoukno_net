@@ -1,0 +1,19 @@
+{
+  "name": "knoukno-v2",
+  "version": "1.0.0",
+  "description": "Kno U Kno registration-first stack",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose up -d mongo && sh -c 'npm --prefix backend run dev & npm --prefix frontend run dev'",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:db": "docker compose up -d mongo",
+    "build": "npm --prefix frontend run build",
+    "start": "sh -c 'npm --prefix backend run start & npm --prefix frontend run start'",
+    "test": "npm --prefix backend test && npm --prefix frontend test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
