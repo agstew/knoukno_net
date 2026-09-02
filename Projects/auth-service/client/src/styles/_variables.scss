@@ -1,0 +1,27 @@
+// Brand palette: white, dodgerblue, black, gold
+$white:      #ffffff;
+$dodgerblue: #1e90ff;
+$black:      #0b0b0b;
+$gold:       #ffd700;
+
+$primary:   $dodgerblue;
+$secondary: $black;
+$warning:   $gold;
+$dark:      $black;
+$light:     #f6f8fb;
+
+$body-color: #1a1d21;
+$body-bg:    $white;
+
+$font-family-sans-serif: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+$headings-font-weight: 800;
+
+$border-radius:    .5rem;
+$border-radius-lg: .75rem;
+
+$link-color: $dodgerblue;
+$link-hover-color: darken($dodgerblue, 12%);
+
+$navbar-dark-color:        rgba($white, .8);
+$navbar-dark-hover-color:  $gold;
+$navbar-dark-active-color: $gold;

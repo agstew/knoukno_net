@@ -1,0 +1,30 @@
+@use "variables" as *;
+
+// Bootstrap 5 compiled with the Kno U Kno palette (white, dodgerblue, black, gold).
+@import "bootstrap/scss/bootstrap";
+@import "sections";
+@import "components";
+
+body {
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main { flex: 1 0 auto; }
+
+.text-gold { color: $gold !important; }
+.bg-gold { background-color: $gold !important; }
+.border-gold { border-color: $gold !important; }
+.btn-gold {
+  background-color: $gold;
+  border-color: $gold;
+  color: $black;
+  font-weight: 700;
+
+  &:hover { background-color: darken($gold, 8%); border-color: darken($gold, 8%); color: $black; }
+}
