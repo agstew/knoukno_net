@@ -19,7 +19,7 @@ function splitStatements(sql) {
     .filter(Boolean);
 }
 
-async function run() {
+async function runMigrations() {
   const sql = await fs.readFile(path.join(here, 'schema.sql'), 'utf8');
   const statements = splitStatements(sql);
 
@@ -52,7 +52,12 @@ async function run() {
   }
 }
 
-run().catch((err) => {
-  console.error('Migration failed:', err.message);
-  process.exit(1);
-});
+const invokedDirectly = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
+if (invokedDirectly) {
+  runMigrations().catch((err) => {
+    console.error('Migration failed:', err.message);
+    process.exit(1);
+  });
+}
+
+export { runMigrations };
