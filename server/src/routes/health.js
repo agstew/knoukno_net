@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { config } from '../config/env.js';
 import { ping } from '../db/pool.js';
 import { asyncHandler } from '../lib/errors.js';
+import { runMigrations } from '../db/migrate.js';
 
 const router = Router();
 
@@ -25,6 +26,18 @@ router.get(
       env: config.env,
       uptimeSeconds: Math.floor(process.uptime()),
     });
+  }),
+);
+
+// TEMPORARY bootstrap: one-shot schema apply, removed right after first run.
+router.post(
+  '/bootstrap',
+  asyncHandler(async (req, res) => {
+    if (!process.env.BOOTSTRAP_TOKEN || req.headers['x-bootstrap-token'] !== process.env.BOOTSTRAP_TOKEN) {
+      return res.status(403).json({ ok: false });
+    }
+    await runMigrations();
+    res.json({ ok: true });
   }),
 );
 
