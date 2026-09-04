@@ -1,0 +1,113 @@
+@use "sass:color";
+@use "variables" as *;
+
+// Sections carry the whole layout — each one pairs copy with an image.
+.kk-section {
+  padding: 5rem 0;
+  position: relative;
+
+  &--alt { background: $light; }
+
+  &--dark {
+    background: $black;
+    color: $white;
+
+    h2, h3 { color: $white; }
+    p { color: rgba($white, .82); }
+  }
+
+  &__eyebrow {
+    display: inline-block;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: $dodgerblue;
+    border-bottom: 3px solid $gold;
+    padding-bottom: .25rem;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    font-size: clamp(1.75rem, 3.4vw, 2.75rem);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+  }
+
+  &__body p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 1.1rem;
+  }
+
+  &__img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 760;
+    max-height: 460px;
+    object-fit: cover;
+    border-radius: $border-radius-lg;
+    border: 1px solid rgba($black, .08);
+    box-shadow: 0 18px 44px rgba($black, .14);
+    background: #eef3f9;
+  }
+
+  &__figure {
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: auto -14px -14px auto;
+      width: 62%;
+      height: 62%;
+      border-right: 6px solid $gold;
+      border-bottom: 6px solid $gold;
+      border-radius: 0 0 $border-radius-lg 0;
+      z-index: -1;
+    }
+  }
+}
+
+.kk-hero {
+  background:
+    linear-gradient(115deg, rgba($black, .94) 0%, rgba($black, .74) 55%, rgba($dodgerblue, .68) 100%),
+    url("/img/hero.svg") center / cover no-repeat;
+  color: $white;
+  padding: 7rem 0 6rem;
+
+  h1 {
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    line-height: 1.05;
+  }
+
+  .lead { color: rgba($white, .9); max-width: 46rem; }
+
+  .kk-hero__rule {
+    width: 96px;
+    height: 6px;
+    background: $gold;
+    border-radius: 3px;
+    margin: 1.75rem 0;
+  }
+}
+
+.kk-stage-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  background: rgba($dodgerblue, .1);
+  color: $dodgerblue;
+  border: 1px solid rgba($dodgerblue, .25);
+
+  &--law      { background: rgba($black, .07);      color: $black;      border-color: rgba($black, .2); }
+  &--location { background: rgba($dodgerblue, .1);  color: $dodgerblue; }
+  &--hiring   { background: rgba($gold, .2);        color: color.adjust($gold, $lightness: -32%); border-color: rgba($gold, .6); }
+  &--people   { background: rgba($dodgerblue, .16); color: color.adjust($dodgerblue, $lightness: -14%); }
+}
