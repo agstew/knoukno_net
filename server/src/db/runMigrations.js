@@ -1,11 +1,12 @@
+import { pool } from './pool.js';
 import { runMigrations } from './migrate.js';
 
 runMigrations()
   .then(() => {
     console.log('Migrations complete.');
-    process.exit(0);
   })
   .catch((err) => {
     console.error('Migration failed:', err.message);
-    process.exit(1);
-  });
+    process.exitCode = 1;
+  })
+  .finally(() => pool.end());

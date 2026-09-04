@@ -48,16 +48,17 @@ async function runMigrations() {
     }
   } finally {
     conn.release();
-    await pool.end();
   }
 }
 
 const invokedDirectly = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];
 if (invokedDirectly) {
-  runMigrations().catch((err) => {
-    console.error('Migration failed:', err.message);
-    process.exit(1);
-  });
+  runMigrations()
+    .catch((err) => {
+      console.error('Migration failed:', err.message);
+      process.exitCode = 1;
+    })
+    .finally(() => pool.end());
 }
 
 export { runMigrations };
