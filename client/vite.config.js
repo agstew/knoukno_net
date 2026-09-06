@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), mkcert()],
   // Read the shared .env at the repo root instead of client/.env.
   envDir: '..',
   server: {
