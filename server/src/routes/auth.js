@@ -186,13 +186,20 @@ router.post(
         { id: uuid(), userId: user.id, hash: sha256(raw), expires },
       );
 
-      await sendMail({
+      const result = await sendMail({
         to: email,
         template: 'password_reset',
         userId: user.id,
         ctaUrl: `${config.appUrl}/reset-password?token=${raw}&email=${encodeURIComponent(email)}`,
         context: { firstName: user.first_name, expiresInMinutes: config.passwordResetTtlMinutes },
       });
+
+      if (!result.sent) {
+        console.error(`[auth] password reset email failed for ${email}:`, result.error || 'SMTP not configured');
+        return res.status(503).json({
+         error: 'We could not send the reset link right now. Please try again in a few minutes.',
+        });
+      }
     }
 
     // Always the same response so the endpoint cannot be used to enumerate accounts.
