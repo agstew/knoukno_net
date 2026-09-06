@@ -88,6 +88,9 @@ export const config = {
     host: process.env.SMTP_HOST || '',
     port: Number(process.env.SMTP_PORT || 465),
     secure: process.env.SMTP_SECURE !== 'false',
+    // Refuse to send credentials/mail in plaintext when secure is false
+    // (e.g. IONOS on port 587, which upgrades via STARTTLS).
+    requireTLS: process.env.SMTP_REQUIRE_TLS === 'true',
     user: process.env.SMTP_USER || '',
     password: process.env.SMTP_PASSWORD || '',
     from: process.env.MAIL_FROM || 'Kno U Kno <knoukno006@gmail.com>',
