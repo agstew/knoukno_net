@@ -21,10 +21,14 @@ export const getRefreshToken = hasSession;
 export const clearTokens = () => setTokens({ 'accessToken': null });
 
 export class ApiError extends Error {
-  constructor(status, message, details) {
-    super(message);
-    this.status = status;
-    this.details = details;
+  constructor(status, message, details = null) {
+    super(message ?? 'Request failed');
+    this.name = 'ApiError';
+    this.status = status ?? 0;
+    this.details = details ?? null;
+    if (details && typeof details === 'object' && 'cause' in details) {
+      this.cause = details.cause;
+    }
   }
 }
 
@@ -42,7 +46,8 @@ async function raw(path, { method = 'GET', body, auth = true, retry = true } = {
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch (error) {
-    throw new ApiError(0, 'Failed to fetch', { cause: error });
+    const cause = error instanceof Error ? error : new Error(String(error));
+    throw new ApiError(0, cause.message || 'Failed to fetch', { cause });
   }
 
   if (res.status === 401 && auth && retry && hasSession()) {
