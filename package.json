@@ -14,7 +14,7 @@
     "build": "npm run build --workspace=client",
     "migrate": "npm run migrate --workspace=server",
     "seed": "npm run seed --workspace=server",
-    "start": "npm start --workspace=server"
+    "start": "npm run migrate --workspace=server && npm start --workspace=server"
   },
   "engines": {
     "node": ">=20"
