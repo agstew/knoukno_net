@@ -16,6 +16,10 @@ function required(name, fallback) {
 
 const env = process.env.NODE_ENV || 'development';
 const isProd = env === 'production';
+const smtpPort = Number(process.env.SMTP_PORT || 465);
+const smtpSecure = process.env.SMTP_SECURE === undefined
+  ? smtpPort === 465
+  : process.env.SMTP_SECURE === 'true';
 
 export const config = {
   env,
@@ -86,8 +90,8 @@ export const config = {
 
   mail: {
     host: process.env.SMTP_HOST || '',
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: process.env.SMTP_SECURE !== 'false',
+    port: smtpPort,
+    secure: smtpSecure,
     user: process.env.SMTP_USER || '',
     password: process.env.SMTP_PASSWORD || '',
     from: process.env.MAIL_FROM || 'Kno U Kno <knoukno006@gmail.com>',
