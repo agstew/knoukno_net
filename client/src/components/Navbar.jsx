@@ -40,6 +40,8 @@ export default function Navbar() {
         </NavLink>
 
         <button
+          id="nav-toggle"
+          name="nav-toggle"
           className="navbar-toggler border-0"
           type="button"
           data-bs-toggle="collapse"
@@ -63,7 +65,7 @@ export default function Navbar() {
 
             {user ? (
               <li className="nav-item ms-lg-3">
-                <button type="button" className="btn btn-gold btn-sm px-3" onClick={handleLogout}>
+                <button id="logout" name="logout" type="button" className="btn btn-gold btn-sm px-3" onClick={handleLogout}>
                   Logout
                 </button>
               </li>

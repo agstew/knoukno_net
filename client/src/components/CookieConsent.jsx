@@ -24,10 +24,10 @@ export default function CookieConsent() {
           <a href="/#cookies" className="text-gold">cookie policy</a> for details.
         </p>
         <div className="d-flex gap-2 flex-shrink-0">
-          <button type="button" className="btn btn-outline-light btn-sm" onClick={() => respond('rejected')}>
+          <button id="cookie-decline" name="cookie-decline" type="button" className="btn btn-outline-light btn-sm" onClick={() => respond('rejected')}>
             Decline
           </button>
-          <button type="button" className="btn btn-gold btn-sm" onClick={() => respond('accepted')}>
+          <button id="cookie-accept" name="cookie-accept" type="button" className="btn btn-gold btn-sm" onClick={() => respond('accepted')}>
             Accept
           </button>
         </div>
