@@ -86,7 +86,11 @@ function UsersPanel() {
           load(1, q);
         }}
       >
+        <label className="visually-hidden" htmlFor="admin-user-search">Search users by email</label>
         <input
+          id="admin-user-search"
+          name="userSearch"
+          type="search"
           className="form-control"
           placeholder="Search by email"
           value={q}

@@ -44,6 +44,7 @@ export default function ResetPassword() {
                 <label className="form-label" htmlFor="password">New password</label>
                 <PasswordInput
                   id="password"
+                  name="password"
                   className="form-control mb-3"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -54,6 +55,7 @@ export default function ResetPassword() {
                 <label className="form-label" htmlFor="confirm">Confirm password</label>
                 <PasswordInput
                   id="confirm"
+                  name="confirm"
                   className="form-control mb-3"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}

@@ -36,7 +36,7 @@ export default function Price() {
           <h1 className="kk-section__title">Pick the number of questions you need</h1>
           <p className="mx-auto mb-0" style={{ maxWidth: '44rem' }}>
             Every plan writes questions around your own business title and keeps every answer you
-            give. Add the bonus pack at checkout for 100 extra questions.
+            give. Paid plans include Grade, Rated, Average, Save, and Print for a two-year term.
           </p>
         </div>
       </section>
@@ -77,6 +77,7 @@ export default function Price() {
                       </p>
                     )}
                     {tier.key === 'free' && <p className="small text-muted mb-3">3 days, no card</p>}
+                    {tier.term && <p className="small text-muted mb-3">{tier.term}</p>}
 
                     <ul className="list-unstyled d-grid gap-2 mb-3">
                       {tier.features.map((f) => (
@@ -99,6 +100,7 @@ export default function Price() {
                           className="form-check-input"
                           type="checkbox"
                           id={`bonus-${tier.key}`}
+                          name={`bonus-${tier.key}`}
                           checked={withBonus}
                           onChange={(e) =>
                             setBonus((b) => ({ ...b, [tier.key]: e.target.checked }))
@@ -126,13 +128,9 @@ export default function Price() {
           </div>
 
           <p className="text-center text-muted mt-4 mb-0">
-            {pricing.providers.stripe && pricing.providers.paypal
-              ? 'Pay with card or PayPal at checkout.'
-              : pricing.providers.stripe
-                ? 'Pay with card at checkout.'
-                : pricing.providers.paypal
-                  ? 'Pay with PayPal at checkout.'
-                  : 'Payment setup is in progress — checkout is not open yet.'}
+            {pricing.providers.paypal
+              ? 'Pay securely with PayPal at checkout.'
+              : 'PayPal setup is in progress — checkout is not open yet.'}
           </p>
         </div>
       </section>

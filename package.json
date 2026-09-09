@@ -2,7 +2,7 @@
   "name": "knoukno",
   "version": "1.0.0",
   "private": true,
-  "description": "Kno U Kno - guided business-startup questionnaire platform (knoukno.net)",
+  "description": "Kno U Kno - guided business-startup questionnaire platform (knoukno.co)",
   "workspaces": [
     "server",
     "client"
@@ -14,7 +14,8 @@
     "build": "npm run build --workspace=client",
     "migrate": "npm run migrate --workspace=server",
     "seed": "npm run seed --workspace=server",
-    "start": "npm run migrate --workspace=server && npm start --workspace=server"
+    "start": "npm run migrate --workspace=server && npm start --workspace=server",
+    "test": "npm test --workspace=server"
   },
   "engines": {
     "node": ">=20"

@@ -58,3 +58,16 @@ export async function captureOrder(orderId) {
   if (!res.ok) throw new Error(`PayPal capture failed: ${await res.text()}`);
   return res.json();
 }
+
+export function verifyCapturedOrder(order, { amountCents, userId }) {
+  if (order?.status !== 'COMPLETED') return false;
+  const unit = order.purchase_units?.[0];
+  const capture = unit?.payments?.captures?.[0];
+  const capturedCents = Math.round(Number(capture?.amount?.value) * 100);
+  return (
+    unit?.reference_id === userId &&
+    capture?.status === 'COMPLETED' &&
+    capture?.amount?.currency_code === 'USD' &&
+    capturedCents === Number(amountCents)
+  );
+}

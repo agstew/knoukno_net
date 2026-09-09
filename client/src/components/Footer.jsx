@@ -13,7 +13,7 @@ export default function Footer() {
               Know you know. The questions come from us — the answers come from you, and they are
               kept so you can use them later.
             </p>
-            <p className="mb-0 small">knoukno.net</p>
+            <p className="mb-0 small">knoukno.co</p>
           </div>
 
           <div className="col-6 col-lg-2">
@@ -41,8 +41,9 @@ export default function Footer() {
             <ul className="list-unstyled d-grid gap-2 mb-3">
               <li>Free — 5 questions, 3 days, $0</li>
               <li>Member — 50 questions / month, $39</li>
-              <li>Pro — 75 questions / year, $436</li>
-              <li className="text-gold">Bonus — 100 extra questions, $100</li>
+              <li>Member-Bonus — 150 questions / month, $199</li>
+              <li>Pro — 75 questions / month, $99</li>
+              <li className="text-gold">Pro-Bonus — 175 questions / month, $299</li>
             </ul>
             <Link className="btn btn-gold btn-sm px-3" to="/price">Buy Now</Link>
           </div>

@@ -6,6 +6,7 @@ import { apiLimiter } from './middleware/rateLimit.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import { parseCookies } from './lib/cookies.js';
 import { ping } from './db/pool.js';
+import { connectMongo, disconnectMongo } from './db/mongo.js';
 
 import healthRoutes from './routes/health.js';
 import authRoutes from './routes/auth.js';
@@ -78,12 +79,20 @@ const server = app.listen(config.port, async () => {
   } catch (err) {
     console.warn(`MySQL not reachable yet: ${err.code || err.message}`);
   }
+  try {
+    if (await connectMongo()) console.log('MongoDB is connected for workbook snapshots.');
+  } catch (err) {
+    console.warn(`MongoDB not reachable yet: ${err.code || err.message}`);
+  }
 });
 
 for (const signal of ['SIGINT', 'SIGTERM']) {
   process.on(signal, () => {
     console.log(`${signal} received, shutting down.`);
-    server.close(() => process.exit(0));
+    server.close(async () => {
+      await disconnectMongo();
+      process.exit(0);
+    });
   });
 }
 

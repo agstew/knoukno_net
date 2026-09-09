@@ -181,6 +181,11 @@ router.post(
       const expires = new Date(Date.now() + config.passwordResetTtlMinutes * 60_000);
 
       await query(
+        `UPDATE password_resets SET used_at = NOW()
+          WHERE user_id = :userId AND used_at IS NULL`,
+        { userId: user.id },
+      );
+      await query(
         `INSERT INTO password_resets (id, user_id, token_hash, expires_at)
          VALUES (:id, :userId, :hash, :expires)`,
         { id: uuid(), userId: user.id, hash: sha256(raw), expires },
@@ -196,9 +201,6 @@ router.post(
 
       if (!result.sent) {
         console.error(`[auth] password reset email failed for ${email}:`, result.error || 'SMTP not configured');
-        return res.status(503).json({
-         error: 'We could not send the reset link right now. Please try again in a few minutes.',
-        });
       }
     }
 

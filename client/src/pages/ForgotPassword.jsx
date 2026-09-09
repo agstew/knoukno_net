@@ -43,6 +43,7 @@ export default function ForgotPassword() {
                 <label className="form-label" htmlFor="email">Email</label>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   className="form-control mb-3"
                   value={email}

@@ -69,7 +69,7 @@ export default function Home() {
     <>
       <section className="kk-hero">
         <div className="container">
-          <span className="kk-section__eyebrow text-white">knoukno.net</span>
+          <span className="kk-section__eyebrow text-white">knoukno.co</span>
           <h1 className="fw-bolder">
             Kno U <span className="text-gold">Kno</span>
             <br />

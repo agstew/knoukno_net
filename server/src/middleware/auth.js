@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config/env.js';
 import { queryOne } from '../db/pool.js';
 import { forbidden, unauthorized } from '../lib/errors.js';
+import { tierActive } from '../services/entitlements.js';
 
 export function signAccessToken(user) {
   // Authorization always re-reads tier/quota from the DB in requireAuth — never from this token.
@@ -63,7 +64,7 @@ export function requireAdmin(req, _res, next) {
 /** Blocks Grade / Rate / Average pages for the free tier. */
 export function requirePaidTier(req, _res, next) {
   if (!req.user) return next(unauthorized());
-  if (req.user.tier === 'free') {
+  if (req.user.tier === 'free' || !tierActive(req.user)) {
     return next(forbidden('Upgrade to Member or Pro to use Grade, Rate, and Average'));
   }
   next();

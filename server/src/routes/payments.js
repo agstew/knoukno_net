@@ -6,9 +6,14 @@ import { query, queryOne } from '../db/pool.js';
 import { asyncHandler, badRequest, notFound } from '../lib/errors.js';
 import * as v from '../lib/validate.js';
 import { requireAuth } from '../middleware/auth.js';
-import { BONUS_PRICE_CENTS, TIERS, toDollars, totalCentsFor } from '../config/tiers.js';
+import { BONUS_PRICE_CENTS, PAID_TIER_KEYS, TIERS, toDollars, totalCentsFor } from '../config/tiers.js';
 import { applyTier } from '../services/entitlements.js';
-import { createOrder, captureOrder, isPaypalConfigured } from '../services/paypal.js';
+import {
+  createOrder,
+  captureOrder,
+  isPaypalConfigured,
+  verifyCapturedOrder,
+} from '../services/paypal.js';
 import { sendMail } from '../services/mailer.js';
 
 const router = Router();
@@ -18,7 +23,6 @@ const isRealCredential = (value) =>
 const stripe = isRealCredential(config.stripe.secretKey)
   ? new Stripe(config.stripe.secretKey)
   : null;
-const PAID_TIERS = ['member', 'pro'];
 
 // Public pricing for the Price page and the footer.
 router.get('/pricing', (_req, res) => {
@@ -36,6 +40,7 @@ router.get('/pricing', (_req, res) => {
       questions: t.questions,
       bonusQuestions: t.bonusQuestions || null,
       period: t.period,
+      term: t.term || null,
       listPrice: toDollars(t.listPriceCents),
       price: toDollars(t.priceCents),
       savings: toDollars(t.listPriceCents - t.priceCents),
@@ -54,7 +59,7 @@ router.get('/pricing', (_req, res) => {
 router.use(requireAuth);
 
 function parseOrder(body) {
-  const tier = v.oneOf(body.tier, 'Tier', PAID_TIERS);
+  const tier = v.oneOf(body.tier, 'Tier', PAID_TIER_KEYS);
   const bonus = v.bool(body.bonus) && TIERS[tier].bonusEligible;
   return { tier, bonus, amountCents: totalCentsFor(tier, bonus) };
 }
@@ -89,7 +94,7 @@ async function fulfil({ user, tier, bonus, amountCents, provider, providerRef })
 
   sendMail({
     to: user.email,
-    template: 'receipt',
+    template: 'paid_welcome',
     userId: user.id,
     ctaUrl: `${config.appUrl}/title`,
     context: {
@@ -179,9 +184,9 @@ router.post(
     if (payment.status === 'paid') return res.json({ ok: true, alreadyCaptured: true });
 
     const capture = await captureOrder(orderId);
-    if (capture.status !== 'COMPLETED') {
+    if (!verifyCapturedOrder(capture, { amountCents: payment.amount_cents, userId: req.user.id })) {
       await query(`UPDATE payments SET status = 'failed' WHERE id = :id`, { id: payment.id });
-      throw badRequest(`PayPal did not complete the payment (${capture.status})`);
+      throw badRequest('PayPal capture details did not match this order');
     }
 
     await fulfil({

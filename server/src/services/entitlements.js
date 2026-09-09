@@ -34,9 +34,9 @@ export async function entitlementsFor(user, titleId = null) {
     remaining: Math.max(0, quota - used),
     active,
     expiresAt: user.tier_expires_at,
-    canGrade: tier.key !== 'free',
-    canRate: tier.key !== 'free',
-    canAverage: tier.key !== 'free',
+    canGrade: active && tier.key !== 'free',
+    canRate: active && tier.key !== 'free',
+    canAverage: active && tier.key !== 'free',
     canPrint: true,
     canSave: true,
   };

@@ -4,6 +4,7 @@ import { query, queryOne } from '../db/pool.js';
 import { asyncHandler, notFound } from '../lib/errors.js';
 import * as v from '../lib/validate.js';
 import { requireAuth } from '../middleware/auth.js';
+import { saveWorkbookSnapshot } from '../db/mongo.js';
 
 const router = Router();
 router.use(requireAuth);
@@ -35,6 +36,22 @@ router.get(
       { titleId },
     );
 
+    const generatedAt = new Date().toISOString();
+    const owner = {
+      email: req.user.email,
+      name: [req.user.first_name, req.user.last_name].filter(Boolean).join(' '),
+    };
+    const savedToMongo = kind === 'save'
+      ? await saveWorkbookSnapshot({
+          userId: req.user.id,
+          titleId,
+          title,
+          owner,
+          generatedAt,
+          items,
+        })
+      : false;
+
     await query(
       `INSERT INTO prints (id, user_id, title_id, kind, page) VALUES (:id, :userId, :titleId, :kind, 'questions')`,
       { id: uuid(), userId: req.user.id, titleId, kind },
@@ -42,9 +59,10 @@ router.get(
 
     res.json({
       title,
-      generatedAt: new Date().toISOString(),
-      owner: { email: req.user.email, name: [req.user.first_name, req.user.last_name].filter(Boolean).join(' ') },
+      generatedAt,
+      owner,
       items,
+      savedToMongo,
     });
   }),
 );

@@ -24,15 +24,37 @@ export const TIERS = {
     name: 'Member Tier',
     questions: 50,
     period: 'month',
-    durationDays: 30,
+    term: '2-year subscription',
+    durationDays: 730,
     listPriceCents: 4900, // $49.00
     priceCents: 3900, // $39.00 after 20% launch discount
     discountPercent: 20,
-    bonusEligible: true,
-    bonusQuestions: 150, // 50 + 100
+    bonusEligible: false,
     features: [
       'Business title',
       '50 questions / month',
+      'Print page',
+      'Save page',
+      'Grade page',
+      'Rate page',
+      'Average page',
+    ],
+    excluded: [],
+  },
+  member_bonus: {
+    key: 'member_bonus',
+    name: 'Member-Bonus Tier',
+    questions: 150,
+    period: 'month',
+    term: '2-year subscription',
+    durationDays: 730,
+    listPriceCents: 19900,
+    priceCents: 19900,
+    discountPercent: 0,
+    bonusEligible: false,
+    features: [
+      'Business title',
+      '150 questions / month',
       'Print page',
       'Save page',
       'Grade page',
@@ -45,16 +67,38 @@ export const TIERS = {
     key: 'pro',
     name: 'Pro Tier',
     questions: 75,
-    period: 'year',
-    durationDays: 365,
-    listPriceCents: 67500, // $675.00
-    priceCents: 43600, // $436.00 after 35% launch discount
-    discountPercent: 35,
-    bonusEligible: true,
-    bonusQuestions: 175, // 75 + 100
+    period: 'month',
+    term: '2-year subscription',
+    durationDays: 730,
+    listPriceCents: 9900,
+    priceCents: 9900,
+    discountPercent: 0,
+    bonusEligible: false,
     features: [
       'Business title',
-      '75 questions / year',
+      '75 questions / month',
+      'Print page',
+      'Save page',
+      'Grade page',
+      'Rate page',
+      'Average page',
+    ],
+    excluded: [],
+  },
+  pro_bonus: {
+    key: 'pro_bonus',
+    name: 'Pro-Bonus Tier',
+    questions: 175,
+    period: 'month',
+    term: '2-year subscription',
+    durationDays: 730,
+    listPriceCents: 29900,
+    priceCents: 29900,
+    discountPercent: 0,
+    bonusEligible: false,
+    features: [
+      'Business title',
+      '175 questions / month',
       'Print page',
       'Save page',
       'Grade page',
@@ -66,6 +110,7 @@ export const TIERS = {
 };
 
 export const TIER_KEYS = Object.keys(TIERS);
+export const PAID_TIER_KEYS = TIER_KEYS.filter((key) => key !== 'free');
 
 export function quotaFor(tierKey, bonus = false) {
   const tier = TIERS[tierKey];

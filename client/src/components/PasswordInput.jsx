@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-export default function PasswordInput({ id, className = 'form-control', ...props }) {
+export default function PasswordInput({ id = 'password', name = id, className = 'form-control', ...props }) {
   const [visible, setVisible] = useState(false);
 
   return (
     <div className="input-group">
-      <input id={id} type={visible ? 'text' : 'password'} className={className} {...props} />
+      <input id={id} name={name} type={visible ? 'text' : 'password'} className={className} {...props} />
       <button
         type="button"
         className="btn btn-outline-secondary"

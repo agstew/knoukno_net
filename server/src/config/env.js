@@ -26,7 +26,7 @@ export const config = {
   isProd,
   port: Number(process.env.PORT || 4000),
   appName: process.env.APP_NAME || 'Kno U Kno',
-  domain: process.env.APP_DOMAIN || 'knoukno.net',
+  domain: process.env.APP_DOMAIN || 'knoukno.co',
   appUrl: process.env.APP_URL || 'http://localhost:5173',
   supportEmail: process.env.SUPPORT_EMAIL || 'knoukno006@gmail.com',
 
@@ -39,6 +39,8 @@ export const config = {
     connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: true } : undefined,
   },
+
+  mongoUri: isProd ? required('MONGODB_URI') : process.env.MONGODB_URI || '',
 
   jwt: {
     // Secrets are only allowed to fall back to a dev value outside production.

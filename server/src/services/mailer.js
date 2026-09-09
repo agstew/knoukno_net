@@ -76,6 +76,12 @@ const FALLBACKS = {
     body: 'Your plan is active and your questions are unlocked.',
     cta: 'Start answering',
   },
+  paid_welcome: {
+    subject: 'Welcome to your Kno U Kno plan',
+    intro: 'Your payment is complete and your plan is active.',
+    body: 'Welcome to Kno U Kno. Your business questions are unlocked for your two-year term. Start with your business title, then work through law, location, hiring, and the people who come to your business.\n\nYour answers stay connected to your business so you can grade, rank, save, and print your plan.',
+    cta: 'Start your business plan',
+  },
 };
 
 /**

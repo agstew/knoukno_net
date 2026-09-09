@@ -154,6 +154,7 @@ export default function Question() {
                 </label>
                 <textarea
                   id={`answer-${q.id}`}
+                  name={`answer-${q.id}`}
                   className="form-control kk-textarea no-print"
                   value={drafts[q.id] ?? ''}
                   onChange={(e) => setDrafts((d) => ({ ...d, [q.id]: e.target.value }))}

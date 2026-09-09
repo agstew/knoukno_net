@@ -150,9 +150,43 @@ function systemPrompt() {
     'You never answer for the founder — the answer always comes from them.',
     'You ask the same underlying business question in a different way each time so the',
     'founder is pushed to think harder, and you always end with a direct question.',
+    'Make the founder resolve competing priorities, quantify evidence, identify legal and',
+    'financial risks, name an accountable person, set a deadline, and define a fallback.',
     'Write in plain, warm, second-person English. No markdown headings, no bullet lists.',
     'Return strict JSON only.',
   ].join(' ');
+}
+
+export function countWords(value) {
+  return String(value || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+export function validGeneratedQuestion({ prompt, example }, targetWords) {
+  const minimum = Math.floor(targetWords * 0.9);
+  const maximum = Math.ceil(targetWords * 1.1);
+  const promptWords = countWords(prompt);
+  const exampleWords = countWords(example);
+  return (
+    promptWords >= minimum &&
+    promptWords <= maximum &&
+    exampleWords >= minimum &&
+    exampleWords <= maximum &&
+    String(prompt).trim().endsWith('?')
+  );
+}
+
+async function requestQuestion(ai, messages) {
+  const completion = await ai.chat.completions.create({
+    model: config.openai.model,
+    temperature: 0.8,
+    response_format: { type: 'json_object' },
+    messages,
+  });
+  const parsed = JSON.parse(completion.choices[0].message.content);
+  return {
+    prompt: String(parsed.prompt || '').trim(),
+    example: String(parsed.example || '').trim(),
+  };
 }
 
 function userPrompt({ business, stage, position, total, previousPrompts, words }) {
@@ -187,22 +221,28 @@ export async function generateQuestion({ business, position, total, previousProm
     };
   }
 
-  const completion = await ai.chat.completions.create({
-    model: config.openai.model,
-    temperature: 0.8,
-    response_format: { type: 'json_object' },
-    messages: [
-      { role: 'system', content: systemPrompt() },
-      { role: 'user', content: userPrompt({ business, stage, position, total, previousPrompts, words }) },
-    ],
-  });
-
-  const parsed = JSON.parse(completion.choices[0].message.content);
+  const messages = [
+    { role: 'system', content: systemPrompt() },
+    { role: 'user', content: userPrompt({ business, stage, position, total, previousPrompts, words }) },
+  ];
+  let generated = await requestQuestion(ai, messages);
+  if (!validGeneratedQuestion(generated, words)) {
+    generated = await requestQuestion(ai, [
+      ...messages,
+      { role: 'assistant', content: JSON.stringify(generated) },
+      {
+        role: 'user',
+        content: `Rewrite both fields to ${words} words each (within 10%). Keep the prompt difficult and end it with a question mark. Return only the corrected JSON.`,
+      },
+    ]);
+  }
+  if (!validGeneratedQuestion(generated, words)) {
+    throw new Error(`AI output did not meet the ${words}-word question and example requirement`);
+  }
   return {
     stage,
     model: config.openai.model,
-    prompt: String(parsed.prompt || '').trim(),
-    example: String(parsed.example || '').trim(),
+    ...generated,
   };
 }
 
@@ -222,7 +262,7 @@ export async function generateLandingSection({ slug, heading, angle }) {
       {
         role: 'system',
         content:
-          'You write landing page copy for Kno U Kno (knoukno.net), a guided workbook that shows people how to start a business from the basics all the way to the finish: law, location, people, and hiring. Plain second-person English, confident, no hype, no markdown. Return strict JSON.',
+          'You write landing page copy for Kno U Kno (knoukno.co), a guided workbook that shows people how to start a business from the basics all the way to the finish: law, location, people, and hiring. Plain second-person English, confident, no hype, no markdown. Return strict JSON.',
       },
       {
         role: 'user',
@@ -252,7 +292,7 @@ export async function generateEmailCopy({ template, context = {} }) {
       {
         role: 'system',
         content:
-          'You write short transactional email copy for Kno U Kno (knoukno.net). Friendly, direct, no hype, no markdown. Return strict JSON.',
+          'You write short transactional email copy for Kno U Kno (knoukno.co). Friendly, direct, no hype, no markdown. Return strict JSON.',
       },
       {
         role: 'user',
