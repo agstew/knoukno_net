@@ -51,7 +51,13 @@ export default function ForgotPassword() {
                   autoComplete="email"
                   required
                 />
-                <button className="btn btn-primary w-100 py-2 fw-bold" disabled={busy}>
+                <button
+                  id="reset-submit"
+                  name="reset-submit"
+                  type="submit"
+                  className="btn btn-primary w-100 py-2 fw-bold"
+                  disabled={busy}
+                >
                   {busy ? 'Sending…' : 'Send reset link'}
                 </button>
               </form>
